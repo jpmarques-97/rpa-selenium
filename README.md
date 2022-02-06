@@ -52,7 +52,7 @@ para instalar o chromedriver é necessários realizar os seguintes passos
 ---
 
 ## References
- - [Selenium with Python](hhttps://selenium-python.readthedocs.io/)
+ - [Selenium with Python](https://selenium-python.readthedocs.io/)
  - [Live de Python](https://www.youtube.com/watch?v=PHHXksljGNA&list=PLOQgLBuj2-3LqnMYKZZgzeC7CKCPF375B)
 
 [Back To The Top](#read-me)
