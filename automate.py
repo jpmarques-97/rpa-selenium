@@ -2,8 +2,10 @@ from datetime import datetime
 from pprint import pprint
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 from time import sleep
 from unidecode import unidecode
+from functools import partial
 
 
 def str_to_num(num_str):
@@ -28,6 +30,18 @@ def format_data(data, strptime):
     datetime_obj = datetime.strptime(data, strptime)
     return datetime_obj.strftime(strftime)
 
+def esperar_elemento(webdriver, xpath):
+    """
+    retorna um booleando indicando se um determinado elemento 
+    pertence a pagina.
+
+    :args:
+        - webdriver: driver para conectar com o browser
+        - xpath: padrao xpath para localizar o elemento
+    """
+    elementos = webdriver.find_element(By.XPATH,xpath)
+    return bool(elementos)
+
 #url correspondendo ao iframe de onde os dados sao realmente retirados
 url = 'https://sistemaswebb3-listados.b3.com.br/listedCompaniesPage/?language=pt-br'
 executable_path = 'chromedriver'
@@ -42,32 +56,41 @@ option.add_argument('--disable-blink-features=AutomationControlled')
 
 #instanciando webdriver e utilizando um GET para a url
 driver = Chrome(executable_path=executable_path,options=option)
+wdw = WebDriverWait(driver, timeout = 30)
 driver.get(url)
 
+#esperando input
+input_xpath = '//*[@id="keyword"]'
+input_wait = partial(esperar_elemento, xpath=input_xpath)
+wdw.until(input_wait)
 #introduzindo o nome "petrobras" no campo de input e clickando em "buscar"
-input = driver.find_element(By.XPATH, '//*[@id="keyword"]')
+input = driver.find_element(By.XPATH, input_xpath)
 input.send_keys('petrobras')
 buscar = driver.find_element(By.XPATH,'//*[@id="accordionName"]/div/app-companies-home-filter-name/form/div/div[3]/button')
 buscar.click()
-sleep(2)
 
+#esperando petrobras
+petr_xpath = '//*[@id="nav-bloco"]/div/div/div/div'
+petr_wait = partial(esperar_elemento, xpath=petr_xpath)
+wdw.until(petr_wait)
 #clickando na caixa que corresponde a petrobras
-petr = driver.find_element(By.XPATH,'//*[@id="nav-bloco"]/div/div/div/div')
+petr = driver.find_element(By.XPATH, petr_xpath)
 petr.click()
-sleep(4)
 
+#esperando por dados economicos
+dados_economicos_xpath = '//*[@id="accordionHeading"]'
+dados_economicos_wait = partial(esperar_elemento, xpath=dados_economicos_xpath)
+wdw.until(dados_economicos_wait)
 #identificando tabela com dados que foram requisitados no desafio
-dados_economicos = driver.find_element(By.XPATH,'//*[@id="accordionHeading"]')
+dados_economicos = driver.find_element(By.XPATH, dados_economicos_xpath)
 dados_economicos.click()
 table = driver.find_element(By.XPATH,'//*[@id="accordionBody"]/div/div[2]/table[1]')
-
 #separando dados de cabecalho da tabela
 thead = table.find_element(By.TAG_NAME, 'thead')
 head_th = thead.find_elements(By.TAG_NAME,'th')
 #separando dados do corpo da tabela
 tbody = table.find_element(By.TAG_NAME, 'tbody')
 body_tr = tbody.find_elements(By.TAG_NAME, 'tr')
-sleep(1)
 
 dicionario = {}
 
