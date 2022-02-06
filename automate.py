@@ -3,7 +3,6 @@ from pprint import pprint
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from time import sleep
 from unidecode import unidecode
 from functools import partial
 
