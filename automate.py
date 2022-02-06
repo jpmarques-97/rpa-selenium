@@ -1,10 +1,10 @@
 from datetime import datetime
+from functools import partial
 from pprint import pprint
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from unidecode import unidecode
-from functools import partial
 
 
 def str_to_num(num_str):
